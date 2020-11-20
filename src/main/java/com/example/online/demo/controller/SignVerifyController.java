@@ -1,13 +1,14 @@
 package com.example.online.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.example.online.demo.common.ResultCodeBean;
+import com.example.online.demo.common.ReturnCode;
+import com.example.online.demo.response.SignVerifyResponse;
 import com.example.online.demo.utils.YsPaySignUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,52 +23,68 @@ import java.util.Map;
  * @date 2020/9/9
  */
 @Slf4j
+@RestController
 public class SignVerifyController {
 
-
     /**
-     * //异步验签 ，异步通知到商户，商户对异步通知内容进行验签
-     *
+     * //异步验签demo1  ,两种均可，只是接收参数的处理方式不一样
+     *   请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
+     *   请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
+     *    请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
      * @author yangx
      * @date 16:51  2020/9/10
      **/
-
-    public static void main(String[] args) throws Exception {
-        //模拟银盛端得签名 --start
-        //异步通知得到内容
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("settlement_amount","0.01");
-        param.put("openid","ofrbF5KScc9PkL5_bs9qcbUtc-xk");
-        param.put("account_date","20200602");
-        param.put("trade_no","01O200602084006871");
-        param.put("notify_type","directpay.status.sync");
-        param.put("total_amount","0.01");
-        param.put("out_trade_no","202006021591062782686-7046");
-        param.put("channel_recv_sn","4200000542202006020751161803");
-        param.put("notify_time","2020-06-02 09:53:33");
-        param.put("channel_recv_sn","4200000542202006020751161803");
-        param.put("trade_status","TRADE_SUCCESS");
-        param.put("payer_fee","0.00");
-        param.put("fee","0.00");
-        param.put("card_type","debit");
-        param.put("partner_fee","0.00");
-        param.put("paygate_no","9000010");
-        param.put("sign_type","RSA");
-        param.put("channel_send_sn","1012006020840068711");
-
+    @RequestMapping(value = "applyAsynVerify", method = RequestMethod.POST)
+    public ResultCodeBean<?> applyAsynVerify(HttpServletRequest request){
+        Map<String, String> data = parseRequest(request);
+        log.info("请求参数：{}", JSON.toJSONString(data));
+        boolean verifyResult=false;
         try {
-            log.info("待签名内容map:{}",param.toString());
-            String sign = YsPaySignUtils.asynSign(param);
-            param.put("sign", sign);
+            verifyResult = YsPaySignUtils.asynVerifyYs(data);
         } catch (Exception e) {
-            log.error("签名异常，异常信息{}",e);
+            e.printStackTrace();
         }
-        //模拟银盛端得签名 --end
-        log.info(param.toString());
-        //商户端验签，重点看这里
-        boolean verifyResult = YsPaySignUtils.asynVerifyYs(param);
-        log.info("异步验签结果：{}",verifyResult);
+        SignVerifyResponse signVerifyResponse=SignVerifyResponse.builder().verifyResult(verifyResult).build();
+        return new ResultCodeBean(ReturnCode.success,"操作成功",signVerifyResponse);
     }
+
+    /**
+     * //异步验签demo2  ，两种均可，只是接收参数的处理方式不一样
+     *  请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
+     *  请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
+     *  请看懂demo,代码没有问题，如果碰到签名验签问题，请仔细核对是否有替换成自己的证书，是否有严格按照demo代码来
+     * @author yangx
+     * @date 16:51  2020/9/10
+     **/
+    @RequestMapping(value = "applyAsynVerify1", method = RequestMethod.POST)
+    public ResultCodeBean<?> applyAsynVerify1(@RequestParam Map<String,String> data, HttpServletRequest request){
+        log.info("请求参数：{}", JSON.toJSONString(data));
+        boolean verifyResult=false;
+        try {
+            //特别注意 商户在生产环境联调做异步通知验签，请替换成银盛下发的生产环境公钥证书
+            verifyResult = YsPaySignUtils.asynVerifyYs(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        SignVerifyResponse signVerifyResponse=SignVerifyResponse.builder().verifyResult(verifyResult).build();
+        return new ResultCodeBean(ReturnCode.success,"操作成功",signVerifyResponse);
+    }
+
+
+    protected Map<String, String> parseRequest(HttpServletRequest request) {
+        Map<String, String> map = new HashMap<String, String>();
+        Enumeration<String> paramNames = request.getParameterNames();//获取所有的参数名
+        while (paramNames.hasMoreElements()) {
+            String name = paramNames.nextElement();//得到参数名
+            String value = request.getParameter(name);//通过参数名获取对应的值
+            System.out.println(MessageFormat.format("{0}={1}", name, value));
+            map.put(name, value);
+        }
+
+        return map;
+    }
+
+
 
 
 

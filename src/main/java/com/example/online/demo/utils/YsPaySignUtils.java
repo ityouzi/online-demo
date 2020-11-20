@@ -101,7 +101,6 @@ public class YsPaySignUtils {
 	 * @throws Exception
 	 */
 	private static PublicKey getYsPayPublicKey() throws Exception {
-
 		PublicKey publicKey = (PublicKey) certMap.get("YsPayPublicKey");
 		if (publicKey == null) {
 
@@ -122,8 +121,7 @@ public class YsPaySignUtils {
 	 * 同步请求参数签名
 	 */
 	public static String sign(Map<String, String> mapData) throws Exception {
-		//商户是根据商户号来获取自己的公私钥证书，本例子中的商户号为shanghu_test，公私钥证书的名称也是shanghu_test，
-		//所以请勿修改商户号，否则会取不到证书
+		//特别注意 商户在生产环境联调测试做签名，请替换成自己在CFCA申请的私钥证书
 		//1.3.1 根据商户号从内存中获取私钥证书
         String partnerId=mapData.get("partner_id");
 		PrivateKey privateKey = (PrivateKey) certMap.get( partnerId);
@@ -131,7 +129,7 @@ public class YsPaySignUtils {
 		if (privateKey == null) {
             String path="/cert/"+partnerId+".pfx";
 			InputStream publicpfxFileInputStream = YsPaySignUtils.class.getResourceAsStream(path);
-			privateKey = getPrivateKeyFromPKCS12("123456", publicpfxFileInputStream);
+			privateKey = getPrivateKeyFromPKCS12("dhfb8888", publicpfxFileInputStream);
 			certMap.put(partnerId, privateKey);
 			if (publicpfxFileInputStream != null) {
 				publicpfxFileInputStream.close();
@@ -147,6 +145,59 @@ public class YsPaySignUtils {
 	}
 
 
+	/**
+	 * 同步请求参数签名
+	 */
+	public static String sign1(Map<String, String> mapData) throws Exception {
+		//商户是根据商户号来获取自己的公私钥证书，本例子中的商户号为shanghu_test，公私钥证书的名称也是shanghu_test，
+		//所以请勿修改商户号，否则会取不到证书
+		//1.3.1 根据商户号从内存中获取私钥证书
+		PrivateKey privateKey = (PrivateKey) certMap.get( "hyfz_test2");
+		//1.3.2 如果内存中不存在，则重新加载获取
+		if (privateKey == null) {
+			String path="/cert/"+"hyfz_test2"+".pfx";
+			InputStream publicpfxFileInputStream = YsPaySignUtils.class.getResourceAsStream(path);
+			privateKey = getPrivateKeyFromPKCS12("123456", publicpfxFileInputStream);
+			certMap.put("hyfz_test2", privateKey);
+			if (publicpfxFileInputStream != null) {
+				publicpfxFileInputStream.close();
+			}
+		}
+		//1.3.3  将所有外层报文参数（sign除外）进行字典排序，组成字符串得到待签名内容
+		String signContent = CommonUtil.getSignContent(mapData);
+		log.info("待签名内容：{}",signContent);
+		//1.3.4 执行签名
+		String sign=rsaSign(privateKey,signContent,"utf-8");
+		//1.3.5 对sign进行url编码
+		return URLEncoder.encode(sign,"utf-8");
+	}
+
+	/**
+	 * 同步请求参数签名
+	 */
+	public static String sign2(Map<String, String> mapData) throws Exception {
+		//商户是根据商户号来获取自己的公私钥证书，本例子中的商户号为shanghu_test，公私钥证书的名称也是shanghu_test，
+		//所以请勿修改商户号，否则会取不到证书
+		//1.3.1 根据商户号从内存中获取私钥证书
+		PrivateKey privateKey = (PrivateKey) certMap.get( "shanghu_test");
+		//1.3.2 如果内存中不存在，则重新加载获取
+		if (privateKey == null) {
+			String path="/cert/"+"shanghu_test"+".pfx";
+			InputStream publicpfxFileInputStream = YsPaySignUtils.class.getResourceAsStream(path);
+			privateKey = getPrivateKeyFromPKCS12("123456", publicpfxFileInputStream);
+			certMap.put("shanghu_test", privateKey);
+			if (publicpfxFileInputStream != null) {
+				publicpfxFileInputStream.close();
+			}
+		}
+		//1.3.3  将所有外层报文参数（sign除外）进行字典排序，组成字符串得到待签名内容
+		String signContent = CommonUtil.getSignContent(mapData);
+		log.info("待签名内容：{}",signContent);
+		//1.3.4 执行签名
+		String sign=rsaSign(privateKey,signContent,"utf-8");
+		//1.3.5 对sign进行url编码
+		return URLEncoder.encode(sign,"utf-8");
+	}
 	/**
 	 * 异步通知参数签名
 	 */
