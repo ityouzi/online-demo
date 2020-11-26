@@ -61,7 +61,7 @@ public class SignVerifyController {
         log.info("请求参数：{}", JSON.toJSONString(data));
         boolean verifyResult=false;
         try {
-            //特别注意 商户在生产环境联调做异步通知验签，请替换成银盛下发的生产环境公钥证书
+            //特别注意 商户在生产环境联调做异步通知验签，请替换成银盛下发的银盛公钥证书
             verifyResult = YsPaySignUtils.asynVerifyYs(data);
         } catch (Exception e) {
             e.printStackTrace();

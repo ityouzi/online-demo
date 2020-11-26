@@ -95,7 +95,7 @@ public class YsPaySignUtils {
 	}
 
 	/**
-	 * 获取缓存中公钥
+	 * 请用银盛的公钥证书
 	 * 
 	 * @return
 	 * @throws Exception
@@ -103,8 +103,8 @@ public class YsPaySignUtils {
 	private static PublicKey getYsPayPublicKey() throws Exception {
 		PublicKey publicKey = (PublicKey) certMap.get("YsPayPublicKey");
 		if (publicKey == null) {
-
-			InputStream publicCertFileInputStream = YsPaySignUtils.class.getResourceAsStream("/cert/shanghu_test.cer");
+			//请用银盛的公钥证书
+			InputStream publicCertFileInputStream = YsPaySignUtils.class.getResourceAsStream("/cert/businessgate1.cer");
 			publicKey = getPublicKeyFromCert(publicCertFileInputStream);
 			certMap.put("YsPayPublicKey", publicKey);
 
@@ -334,6 +334,7 @@ public class YsPaySignUtils {
 		String content = jsonObject.get(repMethod).toString();
 		String sign = jsonObject.get("sign").toString();
 		System.out.println("sign:" + sign+"content:" + content);
+		//请用银盛的公钥证书
 		PublicKey ysPayPublicKey = getYsPayPublicKey();
 
 		Signature signetcheck = Signature.getInstance("SHA1WithRSA");
@@ -351,7 +352,7 @@ public class YsPaySignUtils {
 	 */
 	public static boolean asynVerifyYs(Map<String, String> reqMap) throws Exception {
 		boolean flag = false;
-
+		//请用银盛的公钥证书
 		PublicKey ysPayPublicKey = getYsPayPublicKey();
 
 		String sign = reqMap.get("sign");
