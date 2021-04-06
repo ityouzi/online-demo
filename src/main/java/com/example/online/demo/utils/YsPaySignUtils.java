@@ -129,7 +129,7 @@ public class YsPaySignUtils {
 		if (privateKey == null) {
             String path="/cert/"+partnerId+".pfx";
 			InputStream publicpfxFileInputStream = YsPaySignUtils.class.getResourceAsStream(path);
-			privateKey = getPrivateKeyFromPKCS12("dhfb8888", publicpfxFileInputStream);
+			privateKey = getPrivateKeyFromPKCS12("123456", publicpfxFileInputStream);
 			certMap.put(partnerId, privateKey);
 			if (publicpfxFileInputStream != null) {
 				publicpfxFileInputStream.close();
