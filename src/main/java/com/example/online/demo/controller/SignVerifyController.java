@@ -6,6 +6,7 @@ import com.example.online.demo.common.ReturnCode;
 import com.example.online.demo.response.SignVerifyResponse;
 import com.example.online.demo.utils.YsPaySignUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,6 +83,14 @@ public class SignVerifyController {
         }
 
         return map;
+    }
+
+
+    public static void main(String[] args) {
+         String urlRegex = "^((([hH][tT][tT][pP][sS]?|[fF][tT][pP])\\:\\/\\/)?([\\w\\.\\-]+(\\:[\\w\\.\\&%\\$\\-]+)*@)?((([^\\s\\(\\)\\<\\>\\\"\\.\\[\\]\\,@;:]+)(\\.[^\\s\\(\\)\\<\\>\\\"\\.\\[\\]\\,@;:]+)*(\\.[a-zA-Z]{2,4}))|((([01]?\\d{1,2}|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d{1,2}|2[0-4]\\d|25[0-5])))(\\b\\:(6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|[1-9]\\d{0,3}|0)\\b)?((\\/[^\\/][\\w\\.\\,\\?\\'\\\\/\\+&%\\$#\\=~_\\-@]*)*[^\\.\\,\\?\"\\'\\(\\)\\[\\]!;<>{}\\s\\x7F-\\xFF])?)$";
+        String url="https://ys.shenzhoufu.online/ysepay/asynReceiveReturn";
+        boolean flag= StringUtils.trim(url).matches(urlRegex);
+        System.out.println(flag);
     }
 
 
