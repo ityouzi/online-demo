@@ -15,7 +15,8 @@ import java.util.Date;
 public class DateUtil {
 
     /**
-     * 年月日时分秒毫秒(无下划线) yyyyMMddHHmmssSSS
+     * 年月日时分秒毫秒(无下划线) yyyyMMddHHmmssSSS\
+     *
      */
     public static final String dtLongs = "yyyyMMddHHmmssSSS";
 
@@ -194,6 +195,17 @@ public class DateUtil {
 	 */
 	public static String getDateNow() {
 		SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		return myFormat.format(calendar.getTime());
+	}
+
+    /**
+	 * 取当前时间 格式为 yyyyMMdd
+	 *
+	 * @return
+	 */
+	public static String getDateNowYmd() {
+		SimpleDateFormat myFormat = new SimpleDateFormat("yyyyMMdd");
 		Calendar calendar = Calendar.getInstance();
 		return myFormat.format(calendar.getTime());
 	}

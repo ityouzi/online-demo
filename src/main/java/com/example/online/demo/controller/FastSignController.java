@@ -26,7 +26,7 @@ public class FastSignController {
      * @author yangx
      * @date 18:14  2020/9/10
      **/
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //1、组装报文
         Map<String, String> mapData = new HashMap<String, String>();
 
@@ -35,24 +35,24 @@ public class FastSignController {
         mapData.put("method", "ysepay.trusteeship.sign");
         mapData.put("partner_id", "cws123456");
         mapData.put("timestamp", DateUtil.getDateNow());
-        mapData.put("charset", "utf-8");
         mapData.put("sign_type", "RSA");
+        mapData.put("charset", "utf-8");
         mapData.put("version", "3.0");
 
         //1.2 组装报文-内层报文也就是api文档中的业务参数
         JSONObject json = new JSONObject();
-        json.put("out_trade_no", "2018091965984");
+        json.put("out_trade_no", "20180919659842");
         json.put("seller_id", "cws123456");
         json.put("seller_name", "杭州杭榕企业发展有限公司");
-        json.put("user_id", "user_id");
+        json.put("user_id", "1879217555011");
 //        json.put("imei", "18797813533");
 
         try {
-            json.put("buyer_name", SrcDesUtil.encryptExtraData("cws123456", "钟久亮"));
-            json.put("buyer_card_number", SrcDesUtil.encryptExtraData("cws123456", "6217906500020724322"));
+            json.put("buyer_name", SrcDesUtil.encryptData("cws123456", "叶鹏"));
+            json.put("buyer_card_number",  SrcDesUtil.encryptData("cws123456", "6230580000110362295"));
             //json.put("", SrcDesUtil.decryptExtraData("anguangtingche", "yRrsyL7eujs="));
-            json.put("buyer_mobile", SrcDesUtil.encryptExtraData("cws123456", "18797813533"));
-            json.put("pyerIDNo", SrcDesUtil.encryptExtraData("cws123456", "360781199706100011"));
+            json.put("buyer_mobile", SrcDesUtil.encryptData("cws123456", "18792175550"));
+            json.put("pyerIDNo",SrcDesUtil.encryptData("cws123456", "342921199612262610"));
         } catch (Exception e1) {
             System.out.println("加密是异常");
 
@@ -74,7 +74,7 @@ public class FastSignController {
         log.info("签名之后的报文：{}", CommonUtil.mapToString(mapData));
         //1.4 组装报文完毕，发送请求到银盛网关
         //目前银盛网关没有测试环境可以联调，联调需要访问银盛网关生产环境，生产地址  https://qrcode.ysepay.com/gateway.do
-        String result = HttpRequest.sendPost("https://trusteeship.ysepay.com/gateway.do", CommonUtil.mapToString(mapData));
+        String result = Https.httpsSend("https://trusteeship.ysepay.com/gateway.do", mapData);
         log.info("同步返回结果:{}",result);
 
         if (StringUtils.isBlank(result)) {

@@ -75,7 +75,7 @@ public class JsapiAppPayController {
         } catch (Exception e) {
             log.error("签名异常，异常信息{}",e);
         }
-        log.info("签名之后的报文：{}",CommonUtil.mapToString(mapData));
+        log.info("签名之后的报文：{}", CommonUtil.mapToString(mapData));
         //1.4 组装报文完毕，发送请求到银盛网关
         //目前银盛网关没有测试环境可以联调，联调需要访问银盛网关生产环境，生产地址  https://qrcode.ysepay.com/gateway.do
         String result = HttpRequest.sendPost("https://qrcode.ysepay.com/gateway.do", CommonUtil.mapToString(mapData));
