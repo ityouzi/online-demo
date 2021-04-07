@@ -29,7 +29,7 @@ public class YSSignAgreeController {
 
         //1.1 组装报文
         mapData.put("method", "ysepay.trusteeship.sign");
-        mapData.put("partner_id", "cws123456");//本demo的商户号 请勿修改
+        mapData.put("partner_id", "test");//发起方商户号请替换为自己的发起方商户号
         mapData.put("timestamp", DateUtil.getDateNow());
         mapData.put("charset", "utf-8");
         mapData.put("sign_type", "RSA");
@@ -38,7 +38,7 @@ public class YSSignAgreeController {
         JSONObject json = new JSONObject();
         //商户生成的订单号，生成规则前 8 位，必须为交易日期，如 20180525，范围跨度支持包含当天在内的前后一天，且只能由大小写英文字母、数字、下划线及横杠组成
         json.put("out_trade_no", param.get("out_trade_no"));
-        json.put("seller_id", "cws123456");  //收款方银盛支付用户号
+        json.put("seller_id", "test");  //收款方银盛支付用户号
         json.put("seller_name", "杭州杭榕企业发展有限公司");    //收款方银盛支付客户名
 
 
